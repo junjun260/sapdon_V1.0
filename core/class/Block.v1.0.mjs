@@ -53,71 +53,71 @@ export class Block {
       this.permutations.push({ condition, components });
     }
     addUnitCube() {
-      const unit_cube = BlockComponent.unitCube();
+      const unit_cube = BlockComponents.unitCube();
       this.setVariantComponent(0,unit_cube);
     }
     setLoot(loot) {
-      const loot_ = BlockComponent.loot(loot);
+      const loot_ = BlockComponents.loot(loot);
       this.setVariantComponent(0,loot_);
     }
     setDestructibleByMining(seconds_to_destroy) {
-      const optionObj = BlockComponent.destructibleByMining(seconds_to_destroy);
+      const optionObj = BlockComponents.destructibleByMining(seconds_to_destroy);
       this.setVariantComponent(0,optionObj);
     }
     setDestructibleByExplosion(explosion_resistance) {
-      const optionObj = BlockComponent.destructibleByExplosion(explosion_resistance);
+      const optionObj = BlockComponents.destructibleByExplosion(explosion_resistance);
       this.setVariantComponent(0,optionObj);
     }
     setFriction(friction) {
-      const optionObj = BlockComponent.friction(friction);
+      const optionObj = BlockComponents.friction(friction);
       this.blockData.setComponents(optionObj);
     }
     setLightEmission(light_emission) {
-      const optionObj = BlockComponent.lightEmission(light_emission);
+      const optionObj = BlockComponents.lightEmission(light_emission);
       this.setVariantComponent(0,optionObj);
     }
     setLightDampening(light_dampening) {
-      const optionObj = BlockComponent.lightDampening(light_dampening);
+      const optionObj = BlockComponents.lightDampening(light_dampening);
       this.setVariantComponent(0,optionObj);
     }
     setMaterialInstances(material_instances) {
       this.setVariantMaterialInstances(0,material_instances);
     }
     setCollisionBox(origin,size) {
-      const optionObj = BlockComponent.collisionBox(origin,size);
+      const optionObj = BlockComponents.collisionBox(origin,size);
       this.setVariantComponent(0,optionObj);
     }
     setCraftingTable(table_name,crafting_tags) {
-      const optionObj = BlockComponent.craftingTable(table_name,crafting_tags);
+      const optionObj = BlockComponents.craftingTable(table_name,crafting_tags);
       this.setVariantComponent(0,optionObj);
     }
     setFlammable(catch_chance_modifier, destroy_chance_modifier) {
-      const optionObj = BlockComponent.flammable(catch_chance_modifier,destroy_chance_modifier);
+      const optionObj = BlockComponents.flammable(catch_chance_modifier,destroy_chance_modifier);
       this.setVariantComponent(0,optionObj);
     }
     setGeometry(geometry) {
-      const optionObj = BlockComponent.geometry(geometry);
+      const optionObj = BlockComponents.geometry(geometry);
       this.setVariantComponent(0,optionObj);
     }
     setMapColor(color) {
-      const optionObj = BlockComponent.mapColor(color);
+      const optionObj = BlockComponents.mapColor(color);
       this.setVariantComponent(0,optionObj);
     }
     setSelectionBox(origin,size) {
-      const optionObj = BlockComponent.selectionBox(origin,size);
+      const optionObj = BlockComponents.selectionBox(origin,size);
       this.setVariantComponent(0,optionObj);
     }
     setPlacementFilter(filter) {
-      const optionObj = BlockComponent.placementFilter(filter);
+      const optionObj = BlockComponents.placementFilter(filter);
       this.setVariantComponent(0,optionObj);
     }
     setTransformation(translation,rotation,scale) {
-      const optionObj = BlockComponent.transformation(translation,rotation,scale);
+      const optionObj = BlockComponents.transformation(translation,rotation,scale);
       this.setVariantComponent(0,optionObj);
     }
 
     build(){
-      const blockData = new BlockData("1.12.30");
+      this.blockData = new BlockData("1.12.30");
       blockData.setDescription("identifier",this.identifier);
       blockData.setDescription("menu_category",{"category": this.category});
       this.registerState("sapdon:block_variant_tag",{
@@ -125,7 +125,7 @@ export class Block {
       });
       //materialInstances
       this.variantDatas.forEach(({stateTag})=>{
-        this.addPermutation(`q.block_state('sapdon:block_variant_tag') == ${stateTag}`,BlockComponent.materialInstances(this.materialInstances[stateTag]));
+        this.addPermutation(`q.block_state('sapdon:block_variant_tag') == ${stateTag}`,BlockComponents.materialInstances(this.materialInstances[stateTag]));
       });
       //states
       for(let name in this.states){
@@ -143,7 +143,6 @@ export class Block {
           "components":components
         });
       });
-      return blockData.toJsonData();
     }
     out() {
       const blockData = {

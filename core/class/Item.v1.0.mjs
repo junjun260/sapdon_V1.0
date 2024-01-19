@@ -1,7 +1,5 @@
 import { ItemData } from "./Data.mjs";
 
-
-
 //稳定版api
 
 export class Item {
@@ -22,7 +20,10 @@ export class Item {
   }
   build(){
     this.behData = new ItemData('1.10.0');
+    this.behData.tag = "beh";
+
     this.resData = new ItemData('1.10.0');
+    this.resData.tag = "res";
 
     this.behData.setDescription("identifier", this.identifier);
     this.resData.setDescription("identifier", this.identifier);

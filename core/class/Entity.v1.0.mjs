@@ -113,7 +113,7 @@ export class Entity{
         this.component_groups = [];
         this.events = {};
     }
-    biuld(){
+    build(){
         this.behData = new EntityBehData("1.16.0",{});
         this.resData = new EntityResData("1.10.0",{});
 
@@ -148,7 +148,7 @@ export class Entity{
         this.resourceData.scripts.forEach(({name,script})=>{
             this.resData.setScripts(name,script);
         });
-        this.resData.addRenderController(this.resourceData.renderControllers);
+        this.resData.addRenderController(...this.resourceData.renderControllers);
     }
     addComponent(component){
         this.components.push(component);

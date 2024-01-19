@@ -1,5 +1,5 @@
-import { Item } from "./Item.v1.0.mjs";
 
+import { Item } from "./Item.v1.0.mjs";
 /**
  * 食物类，继承自稳定版物品类
  */

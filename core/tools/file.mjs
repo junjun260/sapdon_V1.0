@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { pathConfig } from "./index.mjs";
+
 
 /**
  * 保存文件
@@ -80,40 +80,43 @@ export function copyFolder(sourcePath, destinationPath) {
   console.log(`Folder ${sourcePath} copied to ${destinationPath}.`);
 }
 
+// 递归遍历目录的函数
+export function traverseDirectory(directory,fileName) {
+  const files = fs.readdirSync(directory);
+  const targetFiles = [];
 
+  files.forEach(file => {
+    const filePath = path.join(directory, file);
+    const stats = fs.statSync(filePath);
 
-/**
- * 保存备份文件dist下
- * @param {string} filePathCopy 相对项目路径下的路径
- * @param {string} data 数据
- */
-export function saveEctype(filePathCopy,data){
-  // 确保目录存在
-  fs.mkdirSync(path.dirname(filePathCopy), { recursive: true });
-   // 创建文件并写入内容
-   fs.writeFile(filePathCopy,data, (err) => {
-    if (err) {
-      return console.error(err);
+    if (stats.isDirectory()&& file !== 'dist') {
+      targetFiles.push(...traverseDirectory(filePath,fileName));
+    } else if (stats.isFile() && file === fileName) {
+      targetFiles.push(filePath);
     }
-    console.log("文件创建成功。");
   });
- }
- 
- export function copyResFile(sourcePath, destinationPath) {
-  fs.copyFile(sourcePath, destinationPath, (error) => {
-    if (error) {
-      console.error(`Failed to copy file: ${error}`);
-      return;
-    }
 
-    console.log(`File copied from ${sourcePath} to ${destinationPath}`);
-  });
+  return targetFiles;
 }
 
+
+export function removeImportsFromFile(filePath) {
+  // 读取文件内容
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+  // 使用正则表达式替换所有的import语句为空字符串
+  const withoutImports = fileContent.replace(/import.*?from\s+['"].*?['"];?/g, '');
+
+  console.log(`已成功删除文件 ${filePath} 中的所有导入语句`);
+  return withoutImports;
+}
+
+/*
 
 export function createItemFile(item,mod_name){
   const itemId = item.identifier.split(":")[1];
   console.log(item.identifier);
+  item.build();
   // 路径
   const mojangPath = pathConfig.mojangPath;
   const behPath = `${mojangPath}/development_behavior_packs/${mod_name}_BP`;
@@ -211,3 +214,4 @@ export function createTestEntityFile(entity,mod_name){
 }
 
 
+*/

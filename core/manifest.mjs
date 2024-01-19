@@ -1,3 +1,8 @@
+export const pathConfig = {
+  mojangPath: "C:/Users/ASUS/AppData/Local/Packages/Microsoft.MinecraftWindowsBeta_8wekyb3d8bbwe/LocalState/games/com.mojang",
+  projectsPath:"./projects"
+};
+
 
 class Manifest{
   constructor(version=2,header={},modules=[],dependencies=[]){

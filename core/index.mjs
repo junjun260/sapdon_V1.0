@@ -2,57 +2,33 @@
 import fs from "fs"
 import path from "path";
 import {readFileSync} from "fs"
-import  {Mod}  from "./manifest.mjs";
-import { copyFileMC, copyFolder, saveFile,saveEctype, createItemFile } from "./file.mjs";
-import { ItemAPI } from "./v1.0/core_Item.mjs";
-import vm from "vm"
+import  {Mod, pathConfig}  from "./manifest.mjs";
+import { copyFileMC, copyFolder, saveFile,removeImportsFromFile,traverseDirectory} from "./tools/file.mjs";
+import vm from "node:vm"
 
-import { Item } from "./class/Item.mjs";
-import { Block } from "./v1.0/Block.v1.0.mjs";
-import { AttachableData, BlockData, ItemData } from "./v1.0/Data.mjs";
-
-// 递归遍历目录的函数
-export function traverseDirectory(directory,fileName) {
-  const files = fs.readdirSync(directory);
-  const targetFiles = [];
-
-  files.forEach(file => {
-    const filePath = path.join(directory, file);
-    const stats = fs.statSync(filePath);
-
-    if (stats.isDirectory()&& file !== 'dist') {
-      targetFiles.push(...traverseDirectory(filePath,fileName));
-    } else if (stats.isFile() && file === fileName) {
-      targetFiles.push(filePath);
-    }
-  });
-
-  return targetFiles;
-}
+import { Projectile } from "./class/Entity.v1.0.mjs";
+import { Equipment } from "./class/Equipment.v1.0.mjs";
+import { AttachableData, BlockData, EntityBehData, EntityResData, ItemData } from "./class/Data.mjs";
+import { ItemAPI } from "./class/core_Item.mjs";
+import { BlockAPI } from "./class/core_block.mjs";
+import { EntityAPI } from "./class/core_entity.mjs";
 
 //启动
 //执行遍历projects文件夹下的目录所有的manifest
-//如果有清单文件就读取该文件
-
-// 定义要遍历的目录路径
-
-export const pathConfig = {
-    mojangPath: "C:/Users/ASUS/AppData/Local/Packages/Microsoft.MinecraftWindowsBeta_8wekyb3d8bbwe/LocalState/games/com.mojang",
-    projectsPath:"./projects"
-};
-
-// 执行遍历
 const manifestPaths = traverseDirectory(pathConfig.projectsPath,'manifest.json');
+
+//如果有清单文件就读取该文件
 const manifests = manifestPaths.map(manifest => {
   return JSON.parse(readFileSync(manifest,'utf8'));
 });
-console.log(manifestPaths[0])
+
+//console.log(manifestPaths[0])
 
 manifests.forEach((element,index)=>{
     //建立配置文件
     //如果清单文件不存在就新建
     const project_name = manifestPaths[index].split('\\')[1];
-    console.log(manifests[index]);
+    //console.log(manifests[index]);
     const behPath = `${pathConfig.mojangPath}/development_behavior_packs/${element.mod_name}_BP`;
     const resPath = `${pathConfig.mojangPath}/development_resource_packs/${element.mod_name}_RP`;
 
@@ -65,9 +41,9 @@ manifests.forEach((element,index)=>{
       saveFile(`${behPath}/manifest.json`,mod.behManifest.toJSON());
       saveFile(`${resPath}/manifest.json`,mod.resManifest.toJSON());
       //保存备份文件
-      saveEctype(`${behPathCopy}/manifest.json`,mod.behManifest.toJSON());
-      saveEctype(`${resPathCopy}/manifest.json`,mod.resManifest.toJSON());
-  }
+      saveFile(`${behPathCopy}/manifest.json`,mod.behManifest.toJSON());
+      saveFile(`${resPathCopy}/manifest.json`,mod.resManifest.toJSON());
+    }
     
     //图片
     copyFileMC(`./projects/${project_name}/pack_icon.png`,`${behPath}/pack_icon.png`);
@@ -88,32 +64,71 @@ manifests.forEach((element,index)=>{
         copyFolder(`./projects/${project_name}/scripts/sapi`,`${behPathCopy}/scripts/sapi`);
     }
     console.log(`./projects/${project_name+"/sapi/"+element.scripts.amb}`)
-    /*
+
     //执行sapdon api
-    const code = readFileSync(`./projects/${project_name+"/"+element.scripts.amb}`,"utf8");
-    console.log(code)
-    const executeCode = new vm.Script(code);
-    executeCode.runInThisContext();
+    const codeText = removeImportsFromFile(`./projects/${project_name+"/"+element.scripts.amb}`);
+    const script = new vm.Script(codeText);
+    // 创建一个具有所需模块的虚拟上下文
+    const context = {
+      Equipment: Equipment,
+      Projectile: Projectile,
+      ItemAPI:ItemAPI,
+      BlockAPI:BlockAPI,
+      EntityAPI:EntityAPI
+    };
+    // 在虚拟上下文中执行代码
+    const sandbox = vm.createContext(context);
+    script.runInContext(sandbox);
 
     ItemAPI.getAllItems().forEach((item)=>{
-      createItemFile(item,project_name);
+      item.build();
     });
-    */
-/*
-  //统一生成文件 Item Block AttachableData
-  ItemData.itemDatas.forEach((itemData)=>{
-    saveEctype(behPathCopy,itemData.toJSON());
-    saveFile(behPath,itemData.toJSON());
-  });
-  BlockData.blockDatas.forEach((blockData)=>{
-    saveEctype(behPathCopy,blockData.toJSON());
-    saveFile(behPath,blockData.toJSON());
-  });
-  AttachableData.attachableDatas.forEach((attachableData)=>{
-    saveEctype(behPathCopy,attachableData.toJSON());
-    saveFile(behPath,attachableData.toJSON());
-  })
-  */
+
+    BlockAPI.getAllBlocks().forEach((block)=>{
+      block.build();
+    });
+
+    EntityAPI.getAllEntities().forEach((entity)=>{
+      entity.build();
+    });
+
+    //统一生成文件 Item Block AttachableData
+    ItemData.itemDatas.forEach((itemData)=>{
+      const dataText = itemData.toJsonData();
+      const itemId = JSON.parse(dataText)["minecraft:item"]["description"]["identifier"].split(":")[1];
+      if(itemData.tag == "beh"){
+        saveFile(`${behPathCopy}/items/${itemId}.json`,dataText);
+        saveFile(`${behPath}/items/${itemId}.json`,dataText);
+      }
+      else{
+        saveFile(`${resPathCopy}/items/${itemId}.json`,dataText);
+        saveFile(`${resPath}/items/${itemId}.json`,dataText);
+      }
+    });
+    BlockData.blockDatas.forEach((blockData)=>{
+      const dataText = blockData.toJsonData();
+      const blockId = JSON.parse(dataText)["minecraft:block"]["description"]["identifier"].split(":")[1];
+      saveFile(`${behPathCopy}/block/${blockId}.json`,dataText);
+      saveFile(`${behPath}/block/${blockId}.json`,dataText);
+    });
+    AttachableData.attachableDatas.forEach((attachableData)=>{
+      const dataText = attachableData.toJsonData();
+      const attachableId = JSON.parse(dataText)["minecraft:attachable"]["description"]["identifier"].split(":")[1];
+      saveFile(`${resPathCopy}/attachable/${attachableId}.json`,dataText);
+      saveFile(`${resPath}/attachable/${attachableId}.json`,dataText);
+    });
+    EntityResData.entityResDatas.forEach((entityResData)=>{
+      const dataText = entityResData.toJsonData();
+      const entityResId = JSON.parse(dataText)["minecraft:client_entity"]["description"]["identifier"].split(":")[1];
+      saveFile(`${resPathCopy}/entity/${entityResId}.json`,dataText);
+      saveFile(`${resPath}/entity/${entityResId}.json`,dataText);
+    });
+    EntityBehData.entityBehDatas.forEach((entityBehData)=>{
+      const dataText = entityBehData.toJsonData();
+      const entityBehId = JSON.parse(dataText)["minecraft:entity"]["description"]["identifier"].split(":")[1];
+      saveFile(`${behPathCopy}/entities/${entityBehId}.json`,dataText);
+      saveFile(`${behPath}/entities/${entityBehId}.json`,dataText);
+    });
 });
 
 

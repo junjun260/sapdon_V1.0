@@ -1,5 +1,6 @@
 export class Data {
   constructor(table, version , data) {
+    this.tag = "beh";
     this.table = table;
     this.version = version;
     this.elements = data||{};
@@ -167,7 +168,7 @@ export class AttachableData extends Data {
     this.animationControllers = [];
     if(!data) return
     if(!data['description']) this.setElement('description', {});
-    if(type!= attachable) return
+    if(type!= "attachable") return
     AttachableData.attachableDatas.push(this);
   }
   

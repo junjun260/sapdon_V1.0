@@ -1,21 +1,15 @@
+import { ItemAPI } from "../../../../core/class/core_Item.mjs";
+import { EntityAPI } from "../../../../core/class/core_entity.mjs";
 
-const mod_name = "masterball";
+EntityAPI.createProjectile("poke:projectile_masterball","textures/items/masterball",1,0.08,[0,0,0],[0,0,0]);
 
-const projectile_masterball  = new Projectile("poke:projectile_masterball","textures/items/masterball",1,0.08,[0,0,0],[0,0,0]);
+const uncaught_masterball = ItemAPI.createEquipmentItem("poke:uncaught_masterball","equipment","masterball")
+      uncaught_masterball.setMaxStackSize(64)
+      uncaught_masterball.setThrowable(true,1,false);
+      uncaught_masterball.setProjectile(1,"poke:projectile_masterball");
 
-const uncaughtMasterball = new Equipment("poke:uncaught_masterball","equipment","masterball");
-      uncaughtMasterball.setMaxStackSize(64);
-      uncaughtMasterball.setThrowable(true,1,1);
-      uncaughtMasterball.setProjectile(1,"poke:projectile_masterball");
-      uncaughtMasterball.setItemName("大师球");
-
-const caughtMasterball = new Equipment("poke:caught_masterball","none","masterball");
-      caughtMasterball.setMaxStackSize(1);
-      caughtMasterball.setThrowable(true,1,1);
-      caughtMasterball.setProjectile(1,"poke:projectile_masterball");
-      caughtMasterball.setFuel(true);
-      caughtMasterball.setItemName("大师球");
-
-createItemFile(uncaughtMasterball,mod_name);
-createItemFile(caughtMasterball,mod_name);
-createEntityFile(projectile_masterball,mod_name);
+const caught_masterball = ItemAPI.createEquipmentItem("poke:caught_masterball","none","masterball")
+      caught_masterball.setMaxStackSize(1)
+      caught_masterball.setThrowable(true,1,false);
+      caught_masterball.setProjectile(1,"poke:projectile_masterball")
+      caught_masterball.setFoil(true);

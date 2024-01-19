@@ -6,28 +6,23 @@
       "category": "equipment"
     },
     "components": {
-      "minecraft:display_name": {
-        "value": "大师球"
-      },
       "minecraft:icon": {
         "texture": "masterball"
       },
-      "minecraft:foil": false,
       "minecraft:max_stack_size": 64,
-      "minecraft:use_duration": 0,
-      "minecraft:allow_off_hand": false,
-      "minecraft:hand_equipped": false,
-      "minecraft:use_animation": "bow",
-      "minecraft:damage": 0,
-      "minecraft:hover_text_color": "gold",
-      "minecraft:can_destroy_in_creative": true,
       "minecraft:throwable": {
-        "do_swing_animation": true
+        "do_swing_animation": true,
+        "max_draw_duration": 1,
+        "scale_power_by_draw_duration": false
       },
       "minecraft:projectile": {
-        "minimum_critical_power": 1,
-        "projectile_entity": "poke:projectile_masterball"
-      }
+        "projectile_entity": "poke:projectile_masterball",
+        "minimum_critical_power": 1
+      },
+      "minecraft:foil": false,
+      "minecraft:use_duration": 0,
+      "minecraft:allow_off_hand": false,
+      "minecraft:hand_equipped": false
     }
   }
 }

@@ -1,5 +1,5 @@
-import { ItemData } from "./Data.mjs";
 import { ItemComponents } from "../objects/components/ItemComponents.mjs";
+import { ItemData } from "./Data.mjs";
 
 export class Equipment{
     tags = [];
@@ -34,6 +34,7 @@ export class Equipment{
             this.addComponet(tag_);
         });
         //repairableItemList
+        if(this.repairableItemList.length>0)
         this.addComponet(ItemComponents.repairable(this.repairableItemList));
 
         //components
@@ -131,7 +132,7 @@ export class Equipment{
         this.addComponet(options);
     }
     setProjectile(power, entityId) {
-        const options = ItemComponents.projectile(power, entityId);
+        const options = ItemComponents.projectile(entityId,power);
         this.addComponet(options);
     }
     

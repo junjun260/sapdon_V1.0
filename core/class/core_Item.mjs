@@ -1,8 +1,8 @@
-import { createItemFile } from "../file.mjs";
+
 import { Boots, Chestplate, Helmet, Leggings } from "./Armor.mjs";
-import { Equipment } from "../class/Equipment.mjs";
-import { Food } from "../class/Food.mjs";
-import { Item } from "../class/Item.mjs"
+import { Equipment } from "../class/Equipment.v1.0.mjs";
+import { Food } from "../class/Food.v1.0.mjs";
+import { Item } from "../class/Item.v1.0.mjs"
 
 export const ItemAPI = {
     itemList:{},
@@ -12,22 +12,22 @@ export const ItemAPI = {
     getAllItems(){
         return Object.values(this.itemList);
     },
-    creatItem:function(identifier,category,texture,parameters){
+    createItem:function(identifier,category,texture,parameters){
         const item = new Item(identifier,category,texture,parameters);
         this.itemList[identifier] = item;
         return item;
     },
-    creatFoodItem:function(identifier,category,texture,parameters){
+    createFoodItem:function(identifier,category,texture,parameters){
         const item = new Food(identifier,category,texture,parameters);
         this.itemList[identifier] = item;
         return item;
     },
-    creatEquipmentItem:function(identifier,category,texture,parameters){
+    createEquipmentItem:function(identifier,category,texture,parameters){
         const item = new Equipment(identifier,category,texture,parameters);
         this.itemList[identifier] = item;
         return item;
     },
-    creatArmorItem:function(type,identifier,category,texture,aromr_texture,parameters){
+    createArmorItem:function(type,identifier,category,texture,aromr_texture,parameters){
         switch(type){
             case "Chestplate":{
                 const item = new Chestplate(identifier,category,texture,aromr_texture,parameters);
