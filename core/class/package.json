@@ -1,0 +1,11 @@
+{
+    "name": "@sapdon/class",
+    "version": "1.0.0",
+    "description": "",
+    "contributors": [
+      {
+        "name": "xiaoben"
+      }
+    ],
+    "license": "MIT"
+  }

@@ -12,6 +12,14 @@ export const ItemAPI = {
     getAllItems(){
         return Object.values(this.itemList);
     },
+    /**
+     * 创建基础物品
+     * @param {string} identifier 物品唯一标识符 如"sapdon:item"
+     * @param {string} category 分类 item equipment none等
+     * @param {string} texture 贴图短名称
+     * @param {Object} parameters 
+     * @returns {Item}
+     */
     createItem:function(identifier,category,texture,parameters){
         const item = new Item(identifier,category,texture,parameters);
         this.itemList[identifier] = item;

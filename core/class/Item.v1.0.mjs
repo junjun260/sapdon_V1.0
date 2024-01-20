@@ -107,14 +107,3 @@ export class Item {
     this.addComponent({ "minecraft:use_duration": number });
   }
 }
-
-/*
-const test = new Item("test:item","item","masterball",{
-  "foil": true,
-  "max_damage": 10,
-  "use_duration": 10,
-  "max_stack_size": 1,
-  "test":111
-});
-test.build();
-console.log(test.behData.toJsonData());*/
