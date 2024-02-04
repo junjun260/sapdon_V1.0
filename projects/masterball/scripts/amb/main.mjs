@@ -1,3 +1,4 @@
+import { Translater } from "../../../../core/class/Translate.mjs";
 import { ItemAPI } from "../../../../core/class/core_Item.mjs";
 import { EntityAPI } from "../../../../core/class/core_entity.mjs";
 
@@ -12,4 +13,6 @@ const caught_masterball = ItemAPI.createEquipmentItem("poke:caught_masterball","
       caught_masterball.setMaxStackSize(1)
       caught_masterball.setThrowable(true,1,false);
       caught_masterball.setProjectile(1,"poke:projectile_masterball")
-      caught_masterball.setFoil(true);
+      caught_masterball.setGlint(true);
+
+Translater.regsiterItemTranslater("poke:uncaught_masterball","zh_CN","大师球");

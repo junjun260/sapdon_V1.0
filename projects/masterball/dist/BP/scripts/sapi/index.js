@@ -6,20 +6,20 @@ const projectileIdStack = [];
 
 
 world.afterEvents.itemUse.subscribe((afterItemUseEvent) => {
-    world.sendMessage("afterItemUseEvent:"+afterItemUseEvent.itemStack.typeId);
+    //world.sendMessage("afterItemUseEvent:"+afterItemUseEvent.itemStack.typeId);
     if(afterItemUseEvent.itemStack.typeId != "poke:caught_masterball") return 
     const entityId = afterItemUseEvent.itemStack.getLore()[2].substring(3);
     entityReleseStack.push(entityId);
-    world.sendMessage("已添加实体ID入栈:"+entityId);
+    //world.sendMessage("已添加实体ID入栈:"+entityId);
 });
 
 world.afterEvents.entitySpawn.subscribe((afterEntitySpawnEvent)=>{
-    world.sendMessage(`entityType:${afterEntitySpawnEvent.entity.typeId} cause:${afterEntitySpawnEvent.cause}`)
+    //world.sendMessage(`entityType:${afterEntitySpawnEvent.entity.typeId} cause:${afterEntitySpawnEvent.cause}`)
     const entity = afterEntitySpawnEvent.entity;
     if(entity.typeId != "poke:projectile_masterball") return
     if(entityReleseStack.length <= projectileIdStack.length) return
     projectileIdStack.push(entity.id);
-    world.sendMessage("已添加抛掷物ID:"+ entity.id);
+    //world.sendMessage("已添加抛掷物ID:"+ entity.id);
 });
 
 
@@ -34,7 +34,7 @@ world.afterEvents.projectileHitEntity.subscribe((event)=>{
     if(source.typeId != "minecraft:player"||projectile.typeId!= "poke:projectile_masterball") return
 
     //world.sendMessage("成功");
-    world.sendMessage("eee:"+projectile.isValid());
+    //world.sendMessage("eee:"+projectile.isValid());
     //world.sendMessage("eeeID:"+projectile.id);
 
     const dimension = source.dimension;
@@ -44,7 +44,13 @@ world.afterEvents.projectileHitEntity.subscribe((event)=>{
     const state = projectileIdStack.includes(projectile.id);
 
     if(!state){
-        world.sendMessage("捕捉");
+        //world.sendMessage("捕捉");
+        const entityRemoveLocation = {
+            x:dropLocation.x,
+            y:dropLocation.y+100,
+            z:dropLocation.z
+        }
+        hitedEntity.teleport(entityRemoveLocation,{});
 
         const entityData = {
             Id:hitedEntity.id,
@@ -53,12 +59,12 @@ world.afterEvents.projectileHitEntity.subscribe((event)=>{
             heath:hitedEntity.getComponent("health").currentValue
         };
         const structureName = replaceNumbersWithLetters(`${-hitedEntity.id}`);
-        world.sendMessage("structureName:"+structureName);
-        dimension.runCommand(`structure save masterball_space_${structureName} ${dropLocation.x} ${dropLocation.y} ${dropLocation.z} ${dropLocation.x+1} ${dropLocation.y+1} ${dropLocation.z+1} true memory false`);
+        //world.sendMessage("structureName:"+structureName);
+        dimension.runCommand(`structure save masterball_space_${structureName} ${entityRemoveLocation.x} ${entityRemoveLocation.y} ${entityRemoveLocation.z} ${entityRemoveLocation.x+1} ${entityRemoveLocation.y+1} ${entityRemoveLocation.z+1} true memory false`);
         hitedEntity.remove();
         const masterball = new ItemStack("poke:caught_masterball",1);
 
-            masterball.nameTag = "大师球("+entityData.name?entityData.name:entityData.typeID+")";
+            masterball.nameTag = "大师球("+entityData.typeID+")";
             masterball.setLore([
                 `name:${entityData.name}`,
                 `typeID:${entityData.typeID}`,
@@ -70,7 +76,7 @@ world.afterEvents.projectileHitEntity.subscribe((event)=>{
         dimension.spawnItem(masterball,dropLocation);
     }
     else{
-        world.sendMessage("释放");
+        //world.sendMessage("释放");
         const index = projectileIdStack.indexOf(projectile.id);
         const entityId = entityReleseStack[index];
         //删除stack里的

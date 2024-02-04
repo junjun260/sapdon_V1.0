@@ -1,0 +1,46 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "thaumcraft",
+    "uuid": "24674492-b1aa-4bbf-b79f-7bb86816bc04",
+    "version": [
+      0,
+      0,
+      1
+    ],
+    "description": "thaumcraft",
+    "min_engine_version": [
+      1,
+      19,
+      50
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "54204a3c-f8d0-4809-9713-9e83821a716f",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "37c1788c-1ea6-45f9-aacb-d829ea608fa3",
+      "entry": "scripts/sapi/index.js",
+      "version": [
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.9.0-beta"
+    }
+  ]
+}

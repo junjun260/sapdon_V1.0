@@ -1,5 +1,8 @@
 //Items 1.16.100+
 export var ItemComponents = {
+    glint:function(boolean){
+        return {"minecraft:glint": boolean}
+    },
     display_name:function(string){
         return {
             "minecraft:display_name": {

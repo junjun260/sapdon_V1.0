@@ -1,4 +1,6 @@
 import { Block } from "./Block.v1.0.mjs";
+import { CropBlockV1 } from "./CropBlock.v1.mjs";
+import {TileBlock} from "./TileBlock.mjs";
 
 export const BlockAPI = {
     blockList:{},
@@ -13,9 +15,14 @@ export const BlockAPI = {
         this.blockList[identifier] = block;
         return block;
     },
-    createCropBlock:function(identifier,category,texture,parameters){
-        const item = new Array(identifier,category,texture,parameters);
-        this.itemList[identifier] = item;
-        return item;
-    }
+    createTileBlock:function(identifier,category,variantDatas){
+        const block = new TileBlock(identifier,category,variantDatas);
+        this.blockList[identifier] = block;
+        return block;
+    },
+    createCropBlock:function(identifier,category,variantDatas){
+        const block = new CropBlockV1(identifier,category,variantDatas);
+        this.blockList[identifier] = block;
+        return block;
+    },
 }

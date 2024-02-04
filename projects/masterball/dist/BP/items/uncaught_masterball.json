@@ -18,11 +18,7 @@
       "minecraft:projectile": {
         "projectile_entity": "poke:projectile_masterball",
         "minimum_critical_power": 1
-      },
-      "minecraft:foil": false,
-      "minecraft:use_duration": 0,
-      "minecraft:allow_off_hand": false,
-      "minecraft:hand_equipped": false
+      }
     }
   }
 }

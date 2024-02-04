@@ -12,6 +12,10 @@ import { AttachableData, BlockData, EntityBehData, EntityResData, ItemData } fro
 import { ItemAPI } from "./class/core_Item.mjs";
 import { BlockAPI } from "./class/core_block.mjs";
 import { EntityAPI } from "./class/core_entity.mjs";
+import { BlockComponents } from "./objects/components/BlockComponents.mjs";
+import { ItemComponents } from "./objects/components/ItemComponents.mjs";
+import { EntityComponents } from "./objects/components/EntityComponents.mjs";
+import { Translater } from "./class/Translate.mjs";
 
 //启动
 //执行遍历projects文件夹下的目录所有的manifest
@@ -63,7 +67,20 @@ manifests.forEach((element,index)=>{
         copyFolder(`./projects/${project_name}/scripts/sapi`,`${behPath}/scripts/sapi`);
         copyFolder(`./projects/${project_name}/scripts/sapi`,`${behPathCopy}/scripts/sapi`);
     }
-    console.log(`./projects/${project_name+"/sapi/"+element.scripts.amb}`)
+    console.log(`./projects/${project_name+"/sapi/"+element.scripts.amb}`);
+
+    //清理ItemAPI
+    ItemAPI.itemList = [];
+    BlockAPI.blockList = [];
+    EntityAPI.entityList = [];
+    ItemData.itemDatas = [];
+    BlockData.blockDatas = [];
+    EntityBehData.entityBehDatas = [];
+    EntityResData.entityResDatas = [];
+    AttachableData.attachableDatas = [];
+
+    //清理翻译文件
+    Translater.languages = {};
 
     //执行sapdon api
     const codeText = removeImportsFromFile(`./projects/${project_name+"/"+element.scripts.amb}`);
@@ -72,9 +89,13 @@ manifests.forEach((element,index)=>{
     const context = {
       Equipment: Equipment,
       Projectile: Projectile,
+      Translater:Translater,
       ItemAPI:ItemAPI,
       BlockAPI:BlockAPI,
-      EntityAPI:EntityAPI
+      EntityAPI:EntityAPI,
+      ItemComponents:ItemComponents,
+      BlockComponents:BlockComponents,
+      EntityComponents:EntityComponents
     };
     // 在虚拟上下文中执行代码
     const sandbox = vm.createContext(context);
@@ -92,6 +113,25 @@ manifests.forEach((element,index)=>{
       entity.build();
     });
 
+    //languages.json
+    const languages = Object.keys(Translater.languages);console.log(languages)
+    saveFile(`${resPathCopy}/texts/languages.json`,JSON.stringify(languages));
+    saveFile(`${resPath}/texts/languages.json`,JSON.stringify(languages));
+
+
+    //langs
+    for(let lang in Translater.languages){
+      const langArr = Translater.languages[lang];
+      let conext = "";
+      for(let i in langArr){
+        conext += langArr[i]
+        conext += "\n";
+      }
+      //console.log(`lang:${lang} langArr:${langArr}`);
+      saveFile(`${resPathCopy}/texts/${lang}.lang`,conext);
+      saveFile(`${resPath}/texts/${lang}.lang`,conext);
+    }
+
     //统一生成文件 Item Block AttachableData
     ItemData.itemDatas.forEach((itemData)=>{
       const dataText = itemData.toJsonData();
@@ -108,14 +148,14 @@ manifests.forEach((element,index)=>{
     BlockData.blockDatas.forEach((blockData)=>{
       const dataText = blockData.toJsonData();
       const blockId = JSON.parse(dataText)["minecraft:block"]["description"]["identifier"].split(":")[1];
-      saveFile(`${behPathCopy}/block/${blockId}.json`,dataText);
-      saveFile(`${behPath}/block/${blockId}.json`,dataText);
+      saveFile(`${behPathCopy}/blocks/${blockId}.json`,dataText);
+      saveFile(`${behPath}/blocks/${blockId}.json`,dataText);
     });
     AttachableData.attachableDatas.forEach((attachableData)=>{
       const dataText = attachableData.toJsonData();
       const attachableId = JSON.parse(dataText)["minecraft:attachable"]["description"]["identifier"].split(":")[1];
-      saveFile(`${resPathCopy}/attachable/${attachableId}.json`,dataText);
-      saveFile(`${resPath}/attachable/${attachableId}.json`,dataText);
+      saveFile(`${resPathCopy}/attachables/${attachableId}.json`,dataText);
+      saveFile(`${resPath}/attachables/${attachableId}.json`,dataText);
     });
     EntityResData.entityResDatas.forEach((entityResData)=>{
       const dataText = entityResData.toJsonData();

@@ -1,0 +1,20 @@
+{
+  "format_version": "1.16.100",
+  "minecraft:item": {
+    "description": {
+      "identifier": "vampire:garlic",
+      "category": "items"
+    },
+    "components": {
+      "minecraft:icon": {
+        "texture": "vampire_garlic"
+      },
+      "minecraft:block_placer": {
+        "block": "vampirism:garlic_block",
+        "use_block_description": [
+          "minecraft:farmland"
+        ]
+      }
+    }
+  }
+}

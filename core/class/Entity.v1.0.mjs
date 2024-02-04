@@ -205,58 +205,58 @@ export class Entity{
     }
 }
 
-export class Projectile extends Entity{
-    constructor(identifier,texture,power,gravity,angle_offset,offset){
-        super(identifier, new ResourceData(), new BehaviorData());
-        this.on_hit = {
-            /*"impact_damage": {
-                "filter": "blaze",
-                "damage": 3,
-                "knockback": true
-            },*/
-            "remove_on_hit": {},
-            /*"particle_on_hit": {
-                "particle_type": "snowballpoof",
-                "num_particles": 6,
-                "on_entity_hit": true,
-                "on_other_hit": true
-            }*/
-        };
-        //beh
-        this.options["runtime_identifier"] = "minecraft:snowball";
-
-        this.setScale(0.5);
-        this.setCollisionBox(0.25,0.25);
-        this.setPushable(true,true);
-        this.setPhysics();
-        this.setProjectile(1,power,gravity,angle_offset,offset,this.on_hit);
-
-        this.behaviorData.addComponent({"minecraft:conditional_bandwidth_optimization": {
-            "default_values": {
-                "max_optimized_distance": 80,
-                "max_dropped_ticks": 10,
-                "use_motion_prediction_hints": true
-            }
-        }});
-
-        //res
-        this.resourceData.addTexture("default",texture);
-        this.resourceData.addMaterial("default","snowball");
-        this.resourceData.addGeometry("default","geometry.item_sprite");
-        this.resourceData.addRenderController("controller.render.item_sprite");
-        this.resourceData.addAnimation("flying", "animation.actor.billboard");
-        this.resourceData.addScripts("animate", [
-            "flying"
-        ]);
+export class Projectile extends Entity {
+    constructor(identifier, texture, power, gravity, angle_offset, offset) {
+      super(identifier, new ResourceData(), new BehaviorData());
+  
+      this.options["runtime_identifier"] = "minecraft:snowball";
+  
+      this.setScale(0.5);
+      this.setCollisionBox(0.25, 0.25);
+      this.setPushable(true, true);
+      this.setPhysics();
+      this.setProjectile(1, power, gravity, angle_offset, offset);
+  
+      this.setRemoveOnHit();
+      this.setImpactDamage();
+      this.setParticleOnHit();
+  
+      this.addDefaultResources(texture);
     }
-    setImpactDamage(filter,damage,knockback){
-        this.on_hit.impact_damage ={
-            "filter": filter,
-            "damage": damage,
-            "knockback": knockback
-        };
+  
+    setRemoveOnHit() {
+      this.on_hit = {};
+      this.on_hit.remove_on_hit = {};
+    }
+  
+    setImpactDamage(filter = "blaze", damage = 3, knockback = true) {
+      this.on_hit.impact_damage = {
+        filter,
+        damage,
+        knockback
+      };
+    }
+  
+    setParticleOnHit(
+      particle_type = "snowballpoof",
+      num_particles = 6,
+      on_entity_hit = true,
+      on_other_hit = true
+    ) {
+      this.on_hit.particle_on_hit = {
+        particle_type,
+        num_particles,
+        on_entity_hit,
+        on_other_hit
+      };
+    }
+  
+    addDefaultResources(texture) {
+      this.resourceData.addTexture("default", texture);
+      this.resourceData.addMaterial("default", "snowball");
+      this.resourceData.addGeometry("default", "geometry.item_sprite");
+      this.resourceData.addRenderController("controller.render.item_sprite");
+      this.resourceData.addAnimation("flying", "animation.actor.billboard");
+      this.resourceData.addScripts("animate", ["flying"]);
     }
 }
-
-
-

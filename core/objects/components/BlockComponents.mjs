@@ -1,4 +1,5 @@
 export var BlockComponents = {
+  
     unitCube:function(){
       return {"minecraft:unit_cube": {}}
     },

@@ -26,7 +26,7 @@ export class Equipment{
         this.behData.setDescription("category", this.category);
         this.behData.setComponents(ItemComponents.icon(this.texture));
 
-        this.setComponentsOptions(this.componentsOptions);
+        //this.setComponentsOptions(this.componentsOptions);
         //tags
         this.tags.forEach((tag)=>{
             const tag_ = {};
@@ -67,8 +67,8 @@ export class Equipment{
         const options = ItemComponents.display_name(string);
         this.addComponet(options);
     }
-    setFoil(boolean) {
-        const options = ItemComponents.foil(boolean);
+    setGlint(boolean){
+        const options = ItemComponents.glint(boolean);
         this.addComponet(options);
     }
     setMaxStackSize(number) {

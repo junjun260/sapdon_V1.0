@@ -10,6 +10,7 @@ export class Block {
       this.states = {};
       this.events = {};
       this.components = {};
+      this.variantComponents = {};
       this.permutations = [];
       this.materialInstances = {};
 
@@ -19,7 +20,7 @@ export class Block {
         textures.forEach((texture,index)=>{
           materialObj[sideArr[index]] = {
               "texture":texture,
-              "render_method": material?material.render_method:"blend",
+              "render_method": material?material.render_method:"alpha_test",
               "face_dimming": material?material.face_dimming:false,
               "ambient_occlusion": material?material.ambient_occlusion:false
           };
@@ -29,21 +30,22 @@ export class Block {
     }
     // 添加事件
     addEvent(eventName, event) {
-      const obj = {
-        [eventName]: event
-      };
-      Object.assign(this.events,obj);
+      this.events[eventName] = event;
     }
     
     registerState(name, context) {
         this.states[name] = context;
     }
+
+    setComponent(component){
+      Object.assign(this.components,component)
+    }
   
     setVariantComponent(stateTag, component) {
-      if(!this.components[stateTag]){
-        this.components[stateTag] = {};
+      if(!this.variantComponents[stateTag]){
+        this.variantComponents[stateTag] = {};
       }
-      Object.assign(this.components[stateTag],component);
+      Object.assign(this.variantComponents[stateTag],component);
       this.addPermutation(`q.block_state('sapdon:block_variant_tag') == ${stateTag}`,component);
     }
     setVariantMaterialInstances(stateTag,material){
@@ -54,72 +56,73 @@ export class Block {
     }
     addUnitCube() {
       const unit_cube = BlockComponents.unitCube();
-      this.setVariantComponent(0,unit_cube);
+      this.setComponent(0,unit_cube);
     }
     setLoot(loot) {
       const loot_ = BlockComponents.loot(loot);
-      this.setVariantComponent(0,loot_);
+      this.setVariantComponent(loot_);
     }
     setDestructibleByMining(seconds_to_destroy) {
       const optionObj = BlockComponents.destructibleByMining(seconds_to_destroy);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setDestructibleByExplosion(explosion_resistance) {
       const optionObj = BlockComponents.destructibleByExplosion(explosion_resistance);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setFriction(friction) {
       const optionObj = BlockComponents.friction(friction);
-      this.blockData.setComponents(optionObj);
+      this.setComponent(optionObj);
     }
     setLightEmission(light_emission) {
       const optionObj = BlockComponents.lightEmission(light_emission);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setLightDampening(light_dampening) {
       const optionObj = BlockComponents.lightDampening(light_dampening);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setMaterialInstances(material_instances) {
+      //const optionObj = BlockComponents.materialInstances(material_instances);
       this.setVariantMaterialInstances(0,material_instances);
     }
     setCollisionBox(origin,size) {
       const optionObj = BlockComponents.collisionBox(origin,size);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setCraftingTable(table_name,crafting_tags) {
       const optionObj = BlockComponents.craftingTable(table_name,crafting_tags);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setFlammable(catch_chance_modifier, destroy_chance_modifier) {
       const optionObj = BlockComponents.flammable(catch_chance_modifier,destroy_chance_modifier);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setGeometry(geometry) {
       const optionObj = BlockComponents.geometry(geometry);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setMapColor(color) {
       const optionObj = BlockComponents.mapColor(color);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setSelectionBox(origin,size) {
       const optionObj = BlockComponents.selectionBox(origin,size);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setPlacementFilter(filter) {
       const optionObj = BlockComponents.placementFilter(filter);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
     setTransformation(translation,rotation,scale) {
       const optionObj = BlockComponents.transformation(translation,rotation,scale);
-      this.setVariantComponent(0,optionObj);
+      this.setComponent(optionObj);
     }
 
     build(){
       this.blockData = new BlockData("1.12.30");
-      blockData.setDescription("identifier",this.identifier);
-      blockData.setDescription("menu_category",{"category": this.category});
+      this.blockData.setDescription("identifier",this.identifier);
+      this.blockData.setDescription("menu_category",{"category": this.category});
       this.registerState("sapdon:block_variant_tag",{
         "values": { "min": 0, "max": this.variantDatas.length>1?this.variantDatas.length-1:1 } 
       });
@@ -129,16 +132,17 @@ export class Block {
       });
       //states
       for(let name in this.states){
-        blockData.setStates(name,this.states[name]);
+        this.blockData.setStates(name,this.states[name]);
       }
+      //components
+      this.blockData.setComponents(this.components);
+      
       //events
-      for(let event in this.events){
-        blockData.setEvents(event);
-      }
+      this.blockData.setEvents(this.events);
       //permutations
       this.permutations.forEach(({condition,components})=>{
         //console.log(components)
-        blockData.addPermutation({
+        this.blockData.addPermutation({
           "condition":condition,
           "components":components
         });

@@ -2,7 +2,7 @@
  
  export class Attachable {
   constructor(identifier, texture, geometry){
-    this.attachableData = new AttachableData('attachable','1.10.0',{});
+    this.attachableData = new AttachableData('attachable','1.8.0',{});
     this.identifier = identifier;
     this.texture = texture;
     this.geometry = geometry;
